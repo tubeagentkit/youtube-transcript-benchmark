@@ -73,3 +73,35 @@ def test_every_results_file_is_valid_json_lines():
         for line in path.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 json.loads(line)
+
+
+def test_superseded_runs_get_their_own_section(tmp_path):
+    current = {**row("ytapi"), "_file": "2026-10-18-home", "_superseded": False}
+    old = {**row("ytapi", ok=False, error="NoTranscriptFound"), "_file": "2026-10-17-home-run1-superseded", "_superseded": True}
+    text = analyze.block([current, old])
+    assert "## Earlier runs, superseded" in text
+    assert text.index("2026-10-18-home") < text.index("## Earlier runs, superseded") < text.index("run1-superseded")
+
+
+class FakeTrack:
+    def __init__(self, code, generated):
+        self.language_code, self.is_generated = code, generated
+
+
+def test_pick_track_matches_regional_variants_and_prefers_manual():
+    tracks = [FakeTrack("bn", True), FakeTrack("en-US", True), FakeTrack("en-GB", False)]
+    assert adapters.pick_track(tracks, "en").language_code == "en-GB"
+    assert adapters.pick_track([FakeTrack("en-US", True)], "en").language_code == "en-US"
+    assert adapters.pick_track(tracks, "es") is None
+
+
+def test_ytdlp_command_enables_node_when_available(monkeypatch):
+    monkeypatch.setattr(adapters.shutil, "which", lambda name: "/usr/bin/node" if name == "node" else None)
+    cmd = adapters.ytdlp_command("abc", "en", "/tmp/%(id)s.%(ext)s")
+    assert cmd[:3] == ["yt-dlp", "--js-runtimes", "node"]
+    assert cmd[-1].endswith("watch?v=abc") and "--write-auto-subs" in cmd
+
+
+def test_ytdlp_command_without_node_has_no_runtime_flag(monkeypatch):
+    monkeypatch.setattr(adapters.shutil, "which", lambda name: None)
+    assert "--js-runtimes" not in adapters.ytdlp_command("abc", "en", "/tmp/x")

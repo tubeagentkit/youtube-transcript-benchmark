@@ -2,7 +2,7 @@
 
 ## Add your network
 
-1. `pip install youtube-transcript-api yt-dlp pytest`
+1. `pip install youtube-transcript-api "yt-dlp[default]" pytest` (and have Node.js installed)
 2. `python harness/run.py --env "<describe the network>" --env-slug <short-name> --methods ytapi,ytdlp`
 3. `python harness/analyze.py` and check `README.md` renders your section.
 4. Open a pull request containing only `results/<date>-<short-name>.jsonl` and the regenerated README block.

@@ -53,7 +53,7 @@ How to read these: success is counted over attempted requests on videos that hav
 ## Run it yourself
 
 ```bash
-pip install youtube-transcript-api yt-dlp
+pip install youtube-transcript-api "yt-dlp[default]"   # plus Node.js, which yt-dlp uses as its JavaScript runtime
 python harness/run.py --env "home network, <country>" --env-slug home --methods ytapi,ytdlp
 python harness/analyze.py
 ```

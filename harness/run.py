@@ -32,6 +32,11 @@ def tool_versions() -> dict:
     versions = {"youtube-transcript-api": importlib.metadata.version("youtube-transcript-api")}
     if shutil.which("yt-dlp"):
         versions["yt-dlp"] = subprocess.run(["yt-dlp", "--version"], capture_output=True, text=True).stdout.strip()
+        try:
+            versions["yt-dlp-ejs"] = importlib.metadata.version("yt-dlp-ejs")
+        except importlib.metadata.PackageNotFoundError:
+            versions["yt-dlp-ejs"] = "not installed"
+        versions["js-runtime"] = "node" if shutil.which("node") else "none"
     return versions
 
 

@@ -8,6 +8,7 @@ import glob
 import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import time
@@ -40,13 +41,27 @@ def _timed(fn):
 
 # --- youtube-transcript-api -------------------------------------------------------------------------
 
+def pick_track(tracks, language: str):
+    """First track whose code is the language or a regional variant of it (en matches en-US), manual before automatic.
+
+    The library's own fetch(languages=["en"]) matches codes exactly, so a video whose only English track is "en-US"
+    raises NoTranscriptFound. yt-dlp (--sub-langs en) and the hosted API both match by language, so all methods
+    answer the same question: does this video have a transcript in this language?
+    """
+    matching = [t for t in tracks if t.language_code.split("-")[0] == language]
+    matching.sort(key=lambda t: t.is_generated)  # stable: manual (False) first
+    return matching[0] if matching else None
+
+
 def ytapi(video_id: str, language: str) -> Result:
     from youtube_transcript_api import YouTubeTranscriptApi
 
     def call():
         try:
-            fetched = YouTubeTranscriptApi().fetch(video_id, languages=[language])
-            text = " ".join(snippet.text for snippet in fetched)
+            track = pick_track(list(YouTubeTranscriptApi().list(video_id)), language)
+            if track is None:
+                return Result(False, error="NoTranscriptFound")
+            text = " ".join(snippet.text for snippet in track.fetch())
         except Exception as exc:  # classify by class name, never by message
             return Result(False, error=type(exc).__name__)
         return Result(len(text) >= MIN_CHARS, error="" if len(text) >= MIN_CHARS else "empty", chars=len(text))
@@ -83,14 +98,27 @@ def vtt_text(raw: str) -> str:
     return " ".join(lines)
 
 
+def ytdlp_command(video_id: str, language: str, out_template: str) -> list:
+    """yt-dlp in its documented recommended setup: installed as yt-dlp[default] with a JavaScript runtime enabled.
+
+    yt-dlp only enables deno by default and warns that YouTube extraction without a JavaScript runtime is
+    deprecated. When node is available it is enabled with --js-runtimes node, as the warning suggests.
+    """
+    cmd = ["yt-dlp"]
+    if shutil.which("node"):
+        cmd += ["--js-runtimes", "node"]
+    cmd += [
+        "--skip-download", "--write-subs", "--write-auto-subs", "--sub-langs", language,
+        "--sub-format", "vtt", "--no-warnings", "--no-progress", "-o", out_template,
+        f"https://www.youtube.com/watch?v={video_id}",
+    ]
+    return cmd
+
+
 def ytdlp(video_id: str, language: str) -> Result:
     def call():
         with tempfile.TemporaryDirectory() as tmp:
-            cmd = [
-                "yt-dlp", "--skip-download", "--write-subs", "--write-auto-subs", "--sub-langs", language,
-                "--sub-format", "vtt", "--no-warnings", "--no-progress", "-o", os.path.join(tmp, "%(id)s.%(ext)s"),
-                f"https://www.youtube.com/watch?v={video_id}",
-            ]
+            cmd = ytdlp_command(video_id, language, os.path.join(tmp, "%(id)s.%(ext)s"))
             try:
                 proc = subprocess.run(cmd, capture_output=True, text=True, timeout=TIMEOUT_S)
             except subprocess.TimeoutExpired:

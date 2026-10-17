@@ -10,13 +10,29 @@ For each combination of video and method: did the method return a transcript (at
 
 | Id | Method | Notes |
 |---|---|---|
-| `ytapi` | [youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api), latest release, `fetch(video_id, languages=[lang])` | Free library. Fetches directly from YouTube. |
-| `ytdlp` | [yt-dlp](https://github.com/yt-dlp/yt-dlp), latest release, `--skip-download --write-subs --write-auto-subs --sub-langs <lang>` | Free command line tool. Latency includes starting the process. |
+| `ytapi` | [youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api), latest release; picks the track with `list()` by language prefix, then fetches it | Free library. Fetches directly from YouTube. |
+| `ytdlp` | [yt-dlp](https://github.com/yt-dlp/yt-dlp), latest release, installed as `yt-dlp[default]` with node enabled (`--js-runtimes node`), `--skip-download --write-subs --write-auto-subs --sub-langs <lang>` | Free command line tool. Latency includes starting the process. |
 | `gyt` | GetYouTubeTranscript hosted API, documented `GET /api/v1/transcript` | Run by the maintainers of this repository, so read its numbers with that in mind. It is used as a black box, through its public documentation only. |
 
 Other hosted services are welcome by pull request (see `CONTRIBUTING.md`). A method is only added with an adapter that uses what the service documents publicly.
 
 Versions of the free tools are recorded in every result line. They are the latest release at run time, not pinned, because most users install the latest.
+
+## How each method is set up
+
+Each method runs the way its own documentation recommends, and all three answer the same question: does this video have a transcript in this language?
+
+- **Language matching.** `en` matches `en`, `en-US`, `en-GB` and so on, manual tracks before automatic ones. yt-dlp (`--sub-langs en`) and the hosted API already work this way. youtube-transcript-api's own `fetch(languages=["en"])` matches codes exactly, so for it the harness lists the tracks and picks by prefix.
+- **yt-dlp.** Installed as `yt-dlp[default]`, which includes the JavaScript challenge solver, with a JavaScript runtime enabled. yt-dlp only enables deno by default and warns that YouTube extraction without a runtime is deprecated, so when node is present the harness passes `--js-runtimes node`. The tool versions, the solver package version and the runtime are recorded in every result line.
+
+## Changes after the first run
+
+Written on 2026-10-17, after the first runs, and kept here on purpose. The first results exposed two setup mistakes in the harness. Both were found by looking at failures, not by choosing a setup that favours one method, but a reader should know the order of events:
+
+1. **yt-dlp had no JavaScript runtime.** The first run used a bare `pip install yt-dlp`. Three of its 44 failures on caption videos were `This video is not available`, and yt-dlp printed a warning recommending a JavaScript runtime. Two of those videos, re-tested by hand, succeeded with `yt-dlp[default]` and `--js-runtimes node`. Fixed as described above. (Seven further failures were HTTP 429 on the subtitle download. One of them was repeated on the same video and did not go away with the runtime, so it is a property of the tool and network, not of the setup.)
+2. **The library was called with exact language codes.** Three of its 44 failures were `NoTranscriptFound` on videos whose only track in that language is a regional variant (`en-US`, `es-ES`). Fixed by language-prefix matching, as described above. The exact-matching behaviour is a real gotcha for library users and is written up in the [errors reference](https://github.com/tubeagentkit/youtube-transcript-errors/blob/main/errors/notranscriptfound.md).
+
+The first-run files are kept as `results/*-run1-superseded.jsonl` and shown under "Earlier runs, superseded". They are not comparable with later runs. Unchanged: the 54 videos (tag `sample-v1`), the success definition, and the request rules. Treat the second run as the first clean measurement. The sample's caption labels still come from one tool (the library), which is a limit already stated above.
 
 ## Videos
 

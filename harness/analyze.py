@@ -27,12 +27,18 @@ EDGE_CELLS = {"no_captions", "age_restricted", "unavailable"}
 
 
 def load(pattern: str = "results/*.jsonl") -> list:
+    """Every result line, tagged with the file it came from. A file name containing "superseded" marks a run
+    made with an earlier version of the harness; it is kept and shown, but in its own section."""
     rows = []
     for path in sorted(glob.glob(str(ROOT / pattern))):
+        name = pathlib.Path(path).stem
         for line in open(path, encoding="utf-8"):
             line = line.strip()
             if line:
-                rows.append(json.loads(line))
+                row = json.loads(line)
+                row["_file"] = name
+                row["_superseded"] = "superseded" in name
+                rows.append(row)
     return rows
 
 
@@ -53,7 +59,7 @@ def ms(v):
 
 
 def run_key(row):
-    return (row["date"], row["env"])
+    return (row["date"], row["env"], row["_file"])
 
 
 def headline_table(rows) -> str:
@@ -100,16 +106,27 @@ def edge_table(rows) -> str:
     return "\n".join(out)
 
 
+def run_section(env_key, subset) -> list:
+    versions = subset[0].get("versions", {})
+    ver = ", ".join(f"{k} {v}" for k, v in versions.items())
+    n_videos = len({r["video_id"] for r in subset})
+    return [f"### {env_key[0]}: {env_key[1]}", "", f"{n_videos} videos. Tools: {ver}. Data: `results/{env_key[2]}.jsonl`.", "",
+            headline_table(subset), "", "<details><summary>By category</summary>", "", category_table(subset), "", "</details>", "",
+            "<details><summary>Edge cases (outcome counts)</summary>", "", edge_table(subset), "", "</details>", ""]
+
+
 def block(rows) -> str:
+    current = [r for r in rows if not r["_superseded"]]
+    earlier = [r for r in rows if r["_superseded"]]
     parts = []
-    for env_key in sorted({run_key(r) for r in rows}, reverse=True):
-        subset = [r for r in rows if run_key(r) == env_key]
-        versions = subset[0].get("versions", {})
-        ver = ", ".join(f"{k} {v}" for k, v in versions.items())
-        n_videos = len({r["video_id"] for r in subset})
-        parts += [f"### {env_key[0]}: {env_key[1]}", "", f"{n_videos} videos. Tools: {ver}.", "",
-                  headline_table(subset), "", "<details><summary>By category</summary>", "", category_table(subset), "", "</details>", "",
-                  "<details><summary>Edge cases (outcome counts)</summary>", "", edge_table(subset), "", "</details>", ""]
+    for env_key in sorted({run_key(r) for r in current}, reverse=True):
+        parts += run_section(env_key, [r for r in current if run_key(r) == env_key])
+    if earlier:
+        parts += ["## Earlier runs, superseded", "",
+                  "Kept for transparency. These were made before the harness setup was corrected (see \"Changes after the first run\" "
+                  "in [METHODOLOGY.md](METHODOLOGY.md)), so they are not comparable with the runs above.", ""]
+        for env_key in sorted({run_key(r) for r in earlier}, reverse=True):
+            parts += run_section(env_key, [r for r in earlier if run_key(r) == env_key])
     return "\n".join(parts) if parts else "No results yet."
 
 
