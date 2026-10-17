@@ -52,6 +52,45 @@ Kept for transparency. These were made before the harness setup was corrected (s
 
 ### 2026-10-17: home network, India (residential)
 
+54 videos. Tools: youtube-transcript-api 1.2.4, yt-dlp 2026.08.19, yt-dlp-ejs 0.8.0, js-runtime node. Data: `results/2026-10-17-home-run2-superseded.jsonl`.
+
+| Method | Success on videos with captions | p50 latency | p95 latency | Not attempted (blocked) |
+|---|---|---|---|---|
+| youtube-transcript-api (library) | 100% (44/44) | 1505 ms | 5945 ms | 0 |
+| yt-dlp (command line) | 80% (35/44) | 3030 ms | 12.6 s | 0 |
+
+<details><summary>By category</summary>
+
+| Category | ytapi | ytdlp |
+|---|---|---|
+| de_any | 100% (3/3) | 100% (3/3) |
+| en_auto_only | 100% (8/8) | 88% (7/8) |
+| en_auto_only_long | 100% (4/4) | 50% (2/4) |
+| en_manual_long | 100% (4/4) | 75% (3/4) |
+| en_manual_medium | 100% (6/6) | 83% (5/6) |
+| en_manual_short | 100% (6/6) | 100% (6/6) |
+| es_any | 100% (3/3) | 67% (2/3) |
+| hi_any | 100% (3/3) | 100% (3/3) |
+| ja_any | 100% (3/3) | 100% (3/3) |
+| short_video | 100% (4/4) | 25% (1/4) |
+
+</details>
+
+<details><summary>Edge cases (outcome counts)</summary>
+
+| Case | Method | Outcomes |
+|---|---|---|
+| age_restricted | ytapi | AgeRestricted: 3 |
+| age_restricted | ytdlp | age_restricted: 3 |
+| no_captions | ytapi | TranscriptsDisabled: 4 |
+| no_captions | ytdlp | no_subtitles: 4 |
+| unavailable | ytapi | VideoUnavailable: 3 |
+| unavailable | ytdlp | unavailable: 3 |
+
+</details>
+
+### 2026-10-17: home network, India (residential)
+
 54 videos. Tools: youtube-transcript-api 1.2.4, yt-dlp 2026.08.19. Data: `results/2026-10-17-home-run1-superseded.jsonl`.
 
 | Method | Success on videos with captions | p50 latency | p95 latency | Not attempted (blocked) |
@@ -86,6 +125,45 @@ Kept for transparency. These were made before the harness setup was corrected (s
 | no_captions | ytdlp | no_subtitles: 4 |
 | unavailable | ytapi | VideoUnavailable: 3 |
 | unavailable | ytdlp | unavailable: 3 |
+
+</details>
+
+### 2026-10-17: GitHub Actions runner (ubuntu-latest, hosted cloud IP)
+
+54 videos. Tools: youtube-transcript-api 1.2.4, yt-dlp 2026.08.19, yt-dlp-ejs 0.8.0, js-runtime node. Data: `results/2026-10-17-actions-run2-superseded.jsonl`.
+
+| Method | Success on videos with captions | p50 latency | p95 latency | Not attempted (blocked) |
+|---|---|---|---|---|
+| youtube-transcript-api (library) | 0% (0/5) | n/a | n/a | 49 |
+| yt-dlp (command line) | 0% (0/5) | n/a | n/a | 49 |
+
+<details><summary>By category</summary>
+
+| Category | ytapi | ytdlp |
+|---|---|---|
+| de_any | n/a | n/a |
+| en_auto_only | n/a | n/a |
+| en_auto_only_long | n/a | n/a |
+| en_manual_long | n/a | n/a |
+| en_manual_medium | n/a | n/a |
+| en_manual_short | 0% (0/5) | 0% (0/5) |
+| es_any | n/a | n/a |
+| hi_any | n/a | n/a |
+| ja_any | n/a | n/a |
+| short_video | n/a | n/a |
+
+</details>
+
+<details><summary>Edge cases (outcome counts)</summary>
+
+| Case | Method | Outcomes |
+|---|---|---|
+| age_restricted | ytapi | not_attempted_after_blocks: 3 |
+| age_restricted | ytdlp | not_attempted_after_blocks: 3 |
+| no_captions | ytapi | not_attempted_after_blocks: 4 |
+| no_captions | ytdlp | not_attempted_after_blocks: 4 |
+| unavailable | ytapi | not_attempted_after_blocks: 3 |
+| unavailable | ytdlp | not_attempted_after_blocks: 3 |
 
 </details>
 
