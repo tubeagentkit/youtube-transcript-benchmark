@@ -22,17 +22,21 @@ Versions of the free tools are recorded in every result line. They are the lates
 
 Each method runs the way its own documentation recommends, and all three answer the same question: does this video have a transcript in this language?
 
-- **Language matching.** `en` matches `en`, `en-US`, `en-GB` and so on, manual tracks before automatic ones. yt-dlp (`--sub-langs en`) and the hosted API already work this way. youtube-transcript-api's own `fetch(languages=["en"])` matches codes exactly, so for it the harness lists the tracks and picks by prefix.
+- **Language matching.** `en` matches `en`, `en-US`, `en-GB` and so on, manual tracks before automatic ones. youtube-transcript-api's own `fetch(languages=["en"])` and yt-dlp's `--sub-langs en` both match codes exactly, so a video whose only Spanish track is `es-ES` is missed by a request for `es`. The harness therefore lists the tracks and picks by prefix for the library, and gives yt-dlp a regular expression that accepts regional variants (`es(-[A-Z0-9]+)?`). The hosted API takes a language and is used as documented.
 - **yt-dlp.** Installed as `yt-dlp[default]`, which includes the JavaScript challenge solver, with a JavaScript runtime enabled. yt-dlp only enables deno by default and warns that YouTube extraction without a runtime is deprecated, so when node is present the harness passes `--js-runtimes node`. The tool versions, the solver package version and the runtime are recorded in every result line.
 
 ## Changes after the first run
 
-Written on 2026-10-17, after the first runs, and kept here on purpose. The first results exposed two setup mistakes in the harness. Both were found by looking at failures, not by choosing a setup that favours one method, but a reader should know the order of events:
+Written on 2026-10-17, after the first runs, and kept here on purpose. The first two runs exposed three setup mistakes in the harness. All three were found by looking at failures, not by choosing a setup that favours one method, but a reader should know the order of events:
 
 1. **yt-dlp had no JavaScript runtime.** The first run used a bare `pip install yt-dlp`. Three of its 44 failures on caption videos were `This video is not available`, and yt-dlp printed a warning recommending a JavaScript runtime. Two of those videos, re-tested by hand, succeeded with `yt-dlp[default]` and `--js-runtimes node`. Fixed as described above. (Seven further failures were HTTP 429 on the subtitle download. One of them was repeated on the same video and did not go away with the runtime, so it is a property of the tool and network, not of the setup.)
 2. **The library was called with exact language codes.** Three of its 44 failures were `NoTranscriptFound` on videos whose only track in that language is a regional variant (`en-US`, `es-ES`). Fixed by language-prefix matching, as described above. The exact-matching behaviour is a real gotcha for library users and is written up in the [errors reference](https://github.com/tubeagentkit/youtube-transcript-errors/blob/main/errors/notranscriptfound.md).
 
-The first-run files are kept as `results/*-run1-superseded.jsonl` and shown under "Earlier runs, superseded". They are not comparable with later runs. Unchanged: the 54 videos (tag `sample-v1`), the success definition, and the request rules. Treat the second run as the first clean measurement. The sample's caption labels still come from one tool (the library), which is a limit already stated above.
+3. **yt-dlp also matches language codes exactly, and the methodology said it did not.** The second run still showed one `no_subtitles` on a video whose only Spanish track is `es-ES` (`yt-dlp --list-subs` shows only that track). This file originally claimed yt-dlp already matched by language; that was an assumption I had not tested, and it was wrong. Fixed with the regular expression above, checked by hand on that video (`es-ES.vtt` is now written).
+
+A check we did on the 429s: yt-dlp's HTTP 429 errors on subtitle downloads were not caused by running right after the library on the same IP. In the second run they happened for 6 of 22 videos when yt-dlp ran first and 2 of 22 when it ran after the library. The numbers are small, so this is weak evidence, but it points to the tool's own subtitle requests. The methods do share one IP, which is a limit of this design.
+
+The earlier-run files are kept as `results/*-run1-superseded.jsonl` and `results/*-run2-superseded.jsonl` and shown under "Earlier runs, superseded". They are not comparable with later runs. Unchanged: the 54 videos (tag `sample-v1`), the success definition, and the request rules. Treat the third run as the first clean measurement. The sample's caption labels still come from one tool (the library), which is a limit already stated above.
 
 ## Videos
 

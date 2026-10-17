@@ -98,6 +98,16 @@ def vtt_text(raw: str) -> str:
     return " ".join(lines)
 
 
+def ytdlp_language_pattern(language: str) -> str:
+    """Regex for --sub-langs that accepts the language and its regional variants (es matches es and es-ES).
+
+    yt-dlp matches subtitle codes exactly: `--sub-langs es` finds nothing on a video whose only Spanish track
+    is es-ES. Regional codes are uppercase letters or digits (en-US, es-419); translated and original markers
+    such as en-US-orig or es-es-ES do not match. No comma, because yt-dlp splits the option on commas.
+    """
+    return f"{language}(-[A-Z0-9]+)?"
+
+
 def ytdlp_command(video_id: str, language: str, out_template: str) -> list:
     """yt-dlp in its documented recommended setup: installed as yt-dlp[default] with a JavaScript runtime enabled.
 
@@ -108,7 +118,7 @@ def ytdlp_command(video_id: str, language: str, out_template: str) -> list:
     if shutil.which("node"):
         cmd += ["--js-runtimes", "node"]
     cmd += [
-        "--skip-download", "--write-subs", "--write-auto-subs", "--sub-langs", language,
+        "--skip-download", "--write-subs", "--write-auto-subs", "--sub-langs", ytdlp_language_pattern(language),
         "--sub-format", "vtt", "--no-warnings", "--no-progress", "-o", out_template,
         f"https://www.youtube.com/watch?v={video_id}",
     ]

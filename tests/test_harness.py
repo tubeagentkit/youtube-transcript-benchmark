@@ -105,3 +105,15 @@ def test_ytdlp_command_enables_node_when_available(monkeypatch):
 def test_ytdlp_command_without_node_has_no_runtime_flag(monkeypatch):
     monkeypatch.setattr(adapters.shutil, "which", lambda name: None)
     assert "--js-runtimes" not in adapters.ytdlp_command("abc", "en", "/tmp/x")
+
+
+def test_ytdlp_language_pattern_accepts_regional_variants_only():
+    import re
+
+    pattern = adapters.ytdlp_language_pattern("es")
+    assert "," not in pattern  # yt-dlp splits --sub-langs on commas
+    for code in ("es", "es-ES", "es-419"):
+        assert re.match(pattern + "$", code)
+    for code in ("en", "es-es-ES", "es-ES-orig", "bn-es-ES", "esp"):
+        assert not re.match(pattern + "$", code)
+    assert adapters.ytdlp_language_pattern("en") in adapters.ytdlp_command("abc", "en", "/tmp/x")
