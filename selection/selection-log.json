@@ -1,0 +1,21 @@
+{
+  "stopped": null,
+  "considered": 143,
+  "rejected": 95,
+  "block_waits": 0,
+  "filled": {
+    "en_manual_short": 6,
+    "en_manual_medium": 6,
+    "en_manual_long": 4,
+    "en_auto_only": 8,
+    "en_auto_only_long": 4,
+    "es_any": 3,
+    "hi_any": 3,
+    "ja_any": 3,
+    "de_any": 3,
+    "short_video": 4,
+    "no_captions": 4,
+    "age_restricted": 3
+  },
+  "complete": true
+}

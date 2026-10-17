@@ -1,0 +1,55 @@
+id,cell,expected_language,caption_kind,duration_s,published,query
+DC44yf8acNY,en_manual_short,en,manual,58,2023-09-27,how to explained quickly
+aj5oLUaoxDs,en_manual_short,en,manual,42,2024-10-06,how to explained quickly
+g3HC8XyaEXU,en_manual_short,en,manual,32,2023-02-07,how to explained quickly
+q966TbakCV0,en_manual_short,en,manual,49,2021-10-02,science fact animation
+gX-Vi0g9WcU,en_manual_short,en,manual,40,2025-02-28,science fact animation
+8vo59AKzU4Q,en_manual_short,en,manual,218,2018-01-19,science fact animation
+j5_471mO14c,en_manual_medium,en,manual,857,2025-06-06,tutorial for beginners
+0tdlR1rBwkM,en_manual_medium,en,manual,954,2021-02-04,tutorial for beginners
+LgXzzu68j7M,en_manual_medium,en,manual,977,2023-07-25,tutorial for beginners
+BBz-Jyr23M4,en_manual_medium,en,manual,971,2016-09-02,tutorial for beginners
+GcOzdAzmtNM,en_manual_medium,en,manual,421,2019-02-24,tutorial for beginners
+vlzOb4OLj94,en_manual_medium,en,manual,774,2022-01-21,tutorial for beginners
+0JUN9aDxVmI,en_manual_long,en,manual,5299,2016-07-11,full lecture university course
+Unzc731iCUY,en_manual_long,en,manual,3823,2019-12-20,full lecture university course
+lZ3bPUKo5zc,en_manual_long,en,manual,4567,2014-06-18,full lecture university course
+6Ql5mQdxeWk,en_manual_long,en,manual,3896,2012-05-31,full lecture university course
+PM2fgSdiVS8,en_auto_only,en,generated,111,2026-10-17,how to explained quickly
+0_JHAIWogVA,en_auto_only,en,generated,69,2026-09-09,how to explained quickly
+-gLg_OqZeuM,en_auto_only,en,generated,68,2026-09-16,how to explained quickly
+sePqPIXMsAc,en_auto_only,en,generated,151,2021-01-25,science fact animation
+4HhQYzD7Y_E,en_auto_only,en,generated,64,2026-09-14,science fact animation
+ugnOdxzGpqY,en_auto_only,en,generated,61,2026-10-15,science fact animation
+ewo6Zn8_BGM,en_auto_only,en,generated,62,2026-09-18,science fact animation
+WubpgTD3ooU,en_auto_only,en,generated,70,2026-08-06,science fact animation
+P-medYaqVak,en_auto_only_long,en,generated,5747,2013-01-29,full lecture university course
+e8JMWtwdLQ4,en_auto_only_long,en,generated,3749,2013-10-30,full lecture university course
+JRZgW1YjCKk,en_auto_only_long,en,generated,6568,2012-10-17,full lecture university course
+M3oWYHYoBvk,en_auto_only_long,en,generated,4028,2013-10-30,full lecture university course
+mbIRgPRYQlw,es_any,es,generated,723,2022-04-26,tutorial en español
+bgvxSwYEGcU,es_any,es,manual,643,2019-03-26,tutorial en español
+8YIZ_2QA1P8,es_any,es,manual,780,2020-10-18,tutorial en español
+EzSZv00GroM,hi_any,hi,generated,1028,2026-10-16,tutorial for beginners
+Mo7lJdBYON4,hi_any,hi,generated,850,2026-10-14,history documentary
+JZz_YZyEuok,hi_any,hi,generated,906,2026-04-23,history documentary
+4181616gZ_E,ja_any,ja,generated,523,2020-11-07,解説 初心者 日本語
+3mhbvXWdzsg,ja_any,ja,generated,2922,2025-11-02,解説 初心者 日本語
+hWR2tetgbN4,ja_any,ja,generated,574,2020-09-12,解説 初心者 日本語
+9UxoNKMbp7Q,de_any,de,generated,1193,2022-12-05,Tutorial auf Deutsch erklärt
+WpuBq4zJMC4,de_any,de,generated,628,2023-07-08,Tutorial auf Deutsch erklärt
+I7UXOfNDpsw,de_any,de,generated,1119,2022-11-07,Tutorial auf Deutsch erklärt
+EgsXO9drk14,short_video,en,generated,13,2026-09-26,shorts #shorts
+R070nqMY-ZE,short_video,en,generated,60,2026-06-23,shorts #shorts
+A6rJ1eG9cEc,short_video,en,generated,60,2026-09-30,shorts #shorts
+SkixxwM5Sgw,short_video,en,generated,56,2026-07-27,shorts #shorts
+uNarViUqW3c,no_captions,en,none,6,2026-09-16,how to explained quickly
+L5QEk6UzZ_I,no_captions,en,none,54,2026-10-16,how to explained quickly
+ad-H4JUdOf0,no_captions,en,none,8,2025-01-02,how to explained quickly
+b1WjcvOUi7I,no_captions,en,none,8,2026-08-17,how to explained quickly
+ZSoIlS4LQiI,age_restricted,en,none,163,2011-10-06,horror movie scene graphic
+R8t0blHwhIQ,age_restricted,en,none,4867,2012-07-18,horror movie scene graphic
+fz6R9dIOaOk,age_restricted,en,none,121,2026-07-06,horror movie scene graphic
+aaaaaaaaaaa,unavailable,en,none,0,,
+zzzzzzzzzzz,unavailable,en,none,0,,
+q1w2e3r4t5y,unavailable,en,none,0,,
