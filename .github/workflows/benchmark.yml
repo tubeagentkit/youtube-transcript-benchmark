@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: "3 6 * * 1"
   workflow_dispatch:
+    inputs:
+      methods:
+        description: "Comma-separated methods to run"
+        default: "ytapi,ytdlp,gyt"
+      slug:
+        description: "Results file slug (results/<date>-<slug>.jsonl)"
+        default: "actions"
 
 permissions:
   contents: write
@@ -24,7 +31,7 @@ jobs:
       - name: Run the benchmark
         env:
           GYT_API_KEY: ${{ secrets.GYT_API_KEY }}
-        run: python harness/run.py --env "GitHub Actions runner (ubuntu-latest, hosted cloud IP)" --env-slug actions
+        run: python harness/run.py --env "GitHub Actions runner (ubuntu-latest, hosted cloud IP)" --env-slug "${{ inputs.slug || 'actions' }}" --methods "${{ inputs.methods || 'ytapi,ytdlp,gyt' }}"
       - name: Summarise
         run: python harness/analyze.py
       - name: Commit results

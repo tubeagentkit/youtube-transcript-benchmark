@@ -132,3 +132,19 @@ def test_an_adapter_exception_is_recorded_not_raised():
 
     assert adapters.with_deadline(boom, 1).error == "ValueError"
     assert adapters.with_deadline(lambda: adapters.Result(True, chars=30), 1).ok
+
+
+def test_hosted_results_file_joins_its_base_run():
+    base = {**row("ytapi"), "_file": "2026-10-17-home", "_superseded": False}
+    hosted = {**row("gyt"), "_file": "2026-10-17-home-hosted", "_superseded": False}
+    assert analyze.run_key(base) == analyze.run_key(hosted)
+    text = analyze.block([base, hosted])
+    assert text.count("### 2026-10-17") == 1
+
+
+def test_no_api_key_in_the_repository():
+    import re
+    import subprocess
+
+    found = subprocess.run(["git", "grep", "-n", "-E", r"sk_live_[A-Za-z0-9_-]{8,}"], capture_output=True, text=True, cwd=ROOT)
+    assert found.stdout == "", "an API key is committed"

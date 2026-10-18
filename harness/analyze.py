@@ -59,7 +59,9 @@ def ms(v):
 
 
 def run_key(row):
-    return (row["date"], row["env"], row["_file"])
+    """Rows from results/<run>.jsonl and results/<run>-hosted.jsonl are one run (the hosted API method is run
+    separately because it needs a key and does not touch YouTube from this machine)."""
+    return (row["date"], row["env"], row["_file"].removesuffix("-hosted"))
 
 
 def headline_table(rows) -> str:
@@ -110,7 +112,7 @@ def run_section(env_key, subset) -> list:
     versions = subset[0].get("versions", {})
     ver = ", ".join(f"{k} {v}" for k, v in versions.items())
     n_videos = len({r["video_id"] for r in subset})
-    return [f"### {env_key[0]}: {env_key[1]}", "", f"{n_videos} videos. Tools: {ver}. Data: `results/{env_key[2]}.jsonl`.", "",
+    return [f"### {env_key[0]}: {env_key[1]}", "", f"{n_videos} videos. Tools: {ver}. Data: `results/{env_key[2]}.jsonl` (and `{env_key[2]}-hosted.jsonl` when present).", "",
             headline_table(subset), "", "<details><summary>By category</summary>", "", category_table(subset), "", "</details>", "",
             "<details><summary>Edge cases (outcome counts)</summary>", "", edge_table(subset), "", "</details>", ""]
 
