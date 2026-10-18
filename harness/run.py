@@ -30,6 +30,9 @@ MAX_CONSECUTIVE_BLOCKS = 5
 
 def tool_versions() -> dict:
     versions = {"youtube-transcript-api": importlib.metadata.version("youtube-transcript-api")}
+    sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip()
+    if sha:
+        versions["harness"] = sha
     if shutil.which("yt-dlp"):
         versions["yt-dlp"] = subprocess.run(["yt-dlp", "--version"], capture_output=True, text=True).stdout.strip()
         try:

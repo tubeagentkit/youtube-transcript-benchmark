@@ -65,7 +65,7 @@ Anyone can add an environment by running the harness and sending the results fil
 
 ## Request rules
 
-Requests are sequential, with a pause between them. The order of methods rotates from video to video so no method always goes first. After 5 blocks in a row (`RequestBlocked`, `IpBlocked`, a bot check or HTTP 429) a method stops for the rest of that run, and the remaining videos are recorded as **not attempted**. They are reported separately and are neither failures nor successes. This keeps the benchmark gentle on YouTube and on the hosted services, and it measures a blocked network as blocked.
+Requests are sequential, with a pause between them. Each request has a 90 second deadline; one that exceeds it is recorded as a failure named `timeout`, so a dead connection cannot freeze a run (a run did freeze this way on 2026-10-17 before the deadline existed, which is why it exists; the 12 lines it had written were discarded and never published). The order of methods rotates from video to video so no method always goes first. After 5 blocks in a row (`RequestBlocked`, `IpBlocked`, a bot check or HTTP 429) a method stops for the rest of that run, and the remaining videos are recorded as **not attempted**. They are reported separately and are neither failures nor successes. This keeps the benchmark gentle on YouTube and on the hosted services, and it measures a blocked network as blocked.
 
 ## Metrics
 

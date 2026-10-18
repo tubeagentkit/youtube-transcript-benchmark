@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -32,9 +33,27 @@ class Result:
     extra: dict = field(default_factory=dict)
 
 
+def with_deadline(fn, seconds):
+    """Run fn in a daemon thread and give up after `seconds`. A request with no timeout of its own (the library's
+    HTTP calls have none) can hang forever on a dead connection and freeze the whole run; a hang is recorded as a
+    failure named "timeout" instead."""
+    box = {}
+
+    def target():
+        try:
+            box["result"] = fn()
+        except Exception as exc:  # an adapter bug must not stop the run
+            box["result"] = Result(False, error=type(exc).__name__)
+
+    thread = threading.Thread(target=target, daemon=True)
+    thread.start()
+    thread.join(seconds)
+    return box.get("result") or Result(False, error="timeout")
+
+
 def _timed(fn):
     start = time.perf_counter()
-    result = fn()
+    result = with_deadline(fn, TIMEOUT_S)
     result.ms = int((time.perf_counter() - start) * 1000)
     return result
 

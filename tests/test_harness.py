@@ -117,3 +117,18 @@ def test_ytdlp_language_pattern_accepts_regional_variants_only():
     for code in ("en", "es-es-ES", "es-ES-orig", "bn-es-ES", "esp"):
         assert not re.match(pattern + "$", code)
     assert adapters.ytdlp_language_pattern("en") in adapters.ytdlp_command("abc", "en", "/tmp/x")
+
+
+def test_a_hung_request_becomes_a_timeout_failure_instead_of_freezing_the_run():
+    import time
+
+    result = adapters.with_deadline(lambda: time.sleep(5) or adapters.Result(True), 0.2)
+    assert (result.ok, result.error) == (False, "timeout")
+
+
+def test_an_adapter_exception_is_recorded_not_raised():
+    def boom():
+        raise ValueError("bug")
+
+    assert adapters.with_deadline(boom, 1).error == "ValueError"
+    assert adapters.with_deadline(lambda: adapters.Result(True, chars=30), 1).ok
