@@ -9,19 +9,28 @@ The short version, which the tables below generate from the raw results: **where
 <!-- results:start -->
 ### 2026-10-18: home network, India (residential)
 
-11 videos. Tools: youtube-transcript-api 1.2.4, harness 84eba34, yt-dlp 2026.08.19, yt-dlp-ejs 0.8.0, js-runtime node. Data: `results/2026-10-18-home.jsonl` (and `2026-10-18-home-hosted.jsonl` when present).
+54 videos. Tools: youtube-transcript-api 1.2.4, harness 3b3f8e3, yt-dlp 2026.08.19, yt-dlp-ejs 0.8.0, js-runtime node. Data: `results/2026-10-18-home.jsonl` (and `2026-10-18-home-hosted.jsonl` when present).
 
 | Method | Success on videos with captions | p50 latency | p95 latency | Not attempted (blocked) |
 |---|---|---|---|---|
-| youtube-transcript-api (library) | 100% (11/11) | 1348 ms | 4646 ms | 0 |
-| yt-dlp (command line) | 100% (11/11) | 3581 ms | 4771 ms | 0 |
+| GetYouTubeTranscript (hosted API, run by this repo's maintainers) | 100% (44/44) | 1380 ms (uncached only; 16 of 44 successes were served from cache) | 11.8 s | 0 |
+| youtube-transcript-api (library) | 100% (44/44) | 1550 ms | 2085 ms | 0 |
+| yt-dlp (command line) | 89% (39/44) | 3760 ms | 6313 ms | 0 |
 
 <details><summary>By category</summary>
 
-| Category | ytapi | ytdlp |
-|---|---|---|
-| en_manual_medium | 100% (5/5) | 100% (5/5) |
-| en_manual_short | 100% (6/6) | 100% (6/6) |
+| Category | gyt | ytapi | ytdlp |
+|---|---|---|---|
+| de_any | 100% (3/3) | 100% (3/3) | 100% (3/3) |
+| en_auto_only | 100% (8/8) | 100% (8/8) | 88% (7/8) |
+| en_auto_only_long | 100% (4/4) | 100% (4/4) | 50% (2/4) |
+| en_manual_long | 100% (4/4) | 100% (4/4) | 100% (4/4) |
+| en_manual_medium | 100% (6/6) | 100% (6/6) | 100% (6/6) |
+| en_manual_short | 100% (6/6) | 100% (6/6) | 100% (6/6) |
+| es_any | 100% (3/3) | 100% (3/3) | 100% (3/3) |
+| hi_any | 100% (3/3) | 100% (3/3) | 100% (3/3) |
+| ja_any | 100% (3/3) | 100% (3/3) | 100% (3/3) |
+| short_video | 100% (4/4) | 100% (4/4) | 50% (2/4) |
 
 </details>
 
@@ -29,6 +38,15 @@ The short version, which the tables below generate from the raw results: **where
 
 | Case | Method | Outcomes |
 |---|---|---|
+| age_restricted | gyt | http_404: 3 |
+| age_restricted | ytapi | AgeRestricted: 3 |
+| age_restricted | ytdlp | age_restricted: 3 |
+| no_captions | gyt | http_404: 4 |
+| no_captions | ytapi | TranscriptsDisabled: 4 |
+| no_captions | ytdlp | no_subtitles: 4 |
+| unavailable | gyt | http_404: 3 |
+| unavailable | ytapi | VideoUnavailable: 3 |
+| unavailable | ytdlp | unavailable: 3 |
 
 </details>
 
@@ -275,6 +293,21 @@ Kept for transparency. These were made before the harness setup was corrected (s
 </details>
 
 <!-- results:end -->
+
+## What these runs show
+
+Written by hand on 2026-10-18 from the tables above. One day, two networks, 54 videos: patterns, not rankings.
+
+- **From a residential connection, all three methods mostly work.** The hosted API and the library each returned a transcript for 44 of 44 videos with captions. yt-dlp returned 39 of 44: five HTTP 429 errors on subtitle downloads, concentrated in Shorts and long videos with automatic captions. Read the library's 44 of 44 with the caveat below.
+- **From a cloud runner, the free tools were blocked at once.** On a GitHub-hosted runner both youtube-transcript-api (`RequestBlocked`) and yt-dlp (bot check) failed all of their first 5 attempts and stopped, with 49 videos not attempted. The hosted API returned 43 of 44 from the same runner and failed once, with an HTTP 504 after 25 seconds. That failure is ours and is counted.
+- **Speed is similar for the median and not for the tail.** Median latency for successful, uncached requests: hosted API 0.9 s from the cloud runner and 1.4 s from India (distance counts), library 1.6 s, yt-dlp 3.8 s (it starts a process each time). The hosted API's slow tail is real: its 95th percentile is 11 to 12 seconds, against about 2 s for the library, and it is not explained by video length (a 42-second video took 12 s). We do not know why from outside and will look at it.
+- **Edge cases agree.** Every method reports videos with captions disabled, age-restricted videos and unavailable videos as failures, never as transcripts. The library and yt-dlp name them differently; the hosted API answers all three with the same HTTP 404.
+
+**Caveats that change how to read this**
+
+- **The library's score is partly circular.** The caption labels used to build the sample came from youtube-transcript-api, from a home connection. A video was only accepted into a "has captions" category if the library could list its tracks. That favours the library and says nothing for or against the other two methods.
+- **One network per type, one day.** A different home connection, country or week can give different results. Cloud addresses are not all treated alike either.
+- **Each method ran the way its documentation recommends, after we corrected our own setup three times.** The corrections and why are in [METHODOLOGY.md](METHODOLOGY.md). The earlier runs are in the results folder, marked superseded.
 
 How to read these: success is counted over attempted requests on videos that have captions. Requests a method never attempted because its network was blocked are counted separately, not as failures. Latency is for successes only and, for the hosted API, for uncached responses only. 54 videos support broad patterns, not small differences. Read [METHODOLOGY.md](METHODOLOGY.md) for the details and the limits of the sample before quoting any number.
 

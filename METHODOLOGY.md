@@ -50,7 +50,7 @@ How they were chosen, so you can repeat or criticise it:
 Limits of this sample, stated plainly:
 
 - It is **not a random sample of YouTube**. Search results favour popular and recent videos, and a category like "age-restricted" only contains what search surfaced.
-- The captions label (manual, automatic, none) comes from one library at selection time, from one home network. A different tool could label a video differently. A video can also change after selection.
+- The captions label (manual, automatic, none) comes from one library at selection time, from one home network. **This favours that library**: a video only entered a "has captions" category if the library could list its tracks, so its success rate on those videos is partly circular. See the README. A different tool could label a video differently. A video can also change after selection.
 - 54 videos support broad patterns, not small differences. Treat any gap under about 10 percentage points as noise.
 - Caption-less and unavailable videos are not scored. They are reported as outcome counts under "Edge cases".
 
@@ -80,3 +80,9 @@ Price, behaviour at volume, rate limits, long-term reliability, proxy setups, ac
 ## Conflict of interest
 
 The maintainers of this repository run one of the three tested services. To limit the effect: the sample was frozen before any result, the harness and raw data are public, failures are classified instead of hidden, the same rules apply to all methods, and results that are unfavourable to the hosted API are published like any other. If you find a mistake in how any method is run, open an issue.
+
+## Incidents
+
+- **2026-10-17: a run froze for 29 hours.** One request of youtube-transcript-api has no timeout and never returned. The run was stopped, its 12 lines were discarded and never published, and every request now has a 90 second deadline recorded as `timeout`. The machine is also kept awake during runs.
+- **2026-10-18: a home run stopped after 79 of 108 lines with a normal exit message and no error.** We could not find the cause. Its file was discarded and the run repeated in full with its output and exit code logged; the repeat completed all 108 lines. The discarded partial results looked like the published ones (no unusual failures).
+- **2026-10-18: about four extra requests to YouTube were made from the home connection while its run was in progress**, to check a language-matching detail for the errors reference. Negligible next to 108, noted for completeness.
