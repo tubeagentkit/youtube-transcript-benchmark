@@ -39,21 +39,23 @@ The short version, which the tables below generate from the raw results: **where
 | Method | Success on videos with captions | p50 latency | p95 latency | Not attempted (blocked) |
 |---|---|---|---|---|
 | GetYouTubeTranscript (hosted API, run by this repo's maintainers) | 98% (43/44) | 929 ms (uncached only; 8 of 43 successes were served from cache) | 11.0 s | 0 |
+| youtube-transcript-api (library) | 0% (0/5) | n/a | n/a | 49 |
+| yt-dlp (command line) | 0% (0/5) | n/a | n/a | 49 |
 
 <details><summary>By category</summary>
 
-| Category | gyt |
-|---|---|
-| de_any | 100% (3/3) |
-| en_auto_only | 100% (8/8) |
-| en_auto_only_long | 100% (4/4) |
-| en_manual_long | 100% (4/4) |
-| en_manual_medium | 100% (6/6) |
-| en_manual_short | 83% (5/6) |
-| es_any | 100% (3/3) |
-| hi_any | 100% (3/3) |
-| ja_any | 100% (3/3) |
-| short_video | 100% (4/4) |
+| Category | gyt | ytapi | ytdlp |
+|---|---|---|---|
+| de_any | 100% (3/3) | n/a | n/a |
+| en_auto_only | 100% (8/8) | n/a | n/a |
+| en_auto_only_long | 100% (4/4) | n/a | n/a |
+| en_manual_long | 100% (4/4) | n/a | n/a |
+| en_manual_medium | 100% (6/6) | n/a | n/a |
+| en_manual_short | 83% (5/6) | 0% (0/5) | 0% (0/5) |
+| es_any | 100% (3/3) | n/a | n/a |
+| hi_any | 100% (3/3) | n/a | n/a |
+| ja_any | 100% (3/3) | n/a | n/a |
+| short_video | 100% (4/4) | n/a | n/a |
 
 </details>
 
@@ -62,8 +64,14 @@ The short version, which the tables below generate from the raw results: **where
 | Case | Method | Outcomes |
 |---|---|---|
 | age_restricted | gyt | http_404: 3 |
+| age_restricted | ytapi | not_attempted_after_blocks: 3 |
+| age_restricted | ytdlp | not_attempted_after_blocks: 3 |
 | no_captions | gyt | http_404: 4 |
+| no_captions | ytapi | not_attempted_after_blocks: 4 |
+| no_captions | ytdlp | not_attempted_after_blocks: 4 |
 | unavailable | gyt | http_404: 3 |
+| unavailable | ytapi | not_attempted_after_blocks: 3 |
+| unavailable | ytdlp | not_attempted_after_blocks: 3 |
 
 </details>
 
